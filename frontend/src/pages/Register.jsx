@@ -13,6 +13,8 @@ import { useAuth } from '@/hooks/useAuth'
 const schema = yup.object({
   name: yup.string().required('Name is required'),
   email: yup.string().email('Invalid email').required('Email is required'),
+  countryCode: yup.string().required('Country code is required'),
+  phone: yup.string().required('Phone number is required'),
   password: yup
     .string()
     .required('Password is required')
@@ -33,10 +35,10 @@ export default function Register() {
     formState: { errors },
   } = useForm({ resolver: yupResolver(schema) })
 
-  const onSubmit = async ({ name, email, password }) => {
+  const onSubmit = async ({ name, email, countryCode, phone, password }) => {
     setLoading(true)
     try {
-      await registerUser(name, email, password)
+      await registerUser({ name, email, countryCode, phone, password })
       toast.success('Account created successfully')
       navigate('/dashboard')
     } catch (err) {
@@ -70,6 +72,25 @@ export default function Register() {
             error={errors.email?.message}
             {...register('email')}
           />
+          <div className="flex gap-3">
+            <div className="w-28">
+              <Input
+                label="Code"
+                placeholder="+1"
+                error={errors.countryCode?.message}
+                {...register('countryCode')}
+              />
+            </div>
+            <div className="flex-1">
+              <Input
+                label="Phone"
+                type="tel"
+                placeholder="1234567890"
+                error={errors.phone?.message}
+                {...register('phone')}
+              />
+            </div>
+          </div>
           <Input
             label="Password"
             type="password"

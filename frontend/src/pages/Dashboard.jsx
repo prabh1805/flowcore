@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { useAuth } from '@/hooks/useAuth'
+import logo from '@/assets/logo/flowCore.svg'
 
 export default function Dashboard() {
   const { user, logout } = useAuth()
@@ -13,9 +14,7 @@ export default function Dashboard() {
       {/* Nav */}
       <nav className="relative z-10 border-b border-white/5 backdrop-blur-sm">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <span className="text-lg font-bold bg-gradient-to-r from-sky-400 to-indigo-400 bg-clip-text text-transparent">
-            FlowCore
-          </span>
+          <img src={logo} alt="FlowCore" className="h-10 w-auto" />
           <button
             onClick={logout}
             className="text-sm text-gray-400 hover:text-white transition-colors cursor-pointer"

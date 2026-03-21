@@ -8,36 +8,29 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  const fetchUser = async () => {
-    try {
-      const { data } = await api.get('/user/me')
-      setUser(data)
-    } catch {
-      setUser(null)
-    } finally {
-      setLoading(false)
-    }
-  }
-
   useEffect(() => {
-    if (getAccessToken()) {
-      fetchUser()
-    } else {
-      setLoading(false)
+    const token = getAccessToken()
+    if (token) {
+      setUser({ token })
     }
+    setLoading(false)
   }, [])
 
   const login = async (email, password) => {
     const { data } = await api.post('/auth/login', { email, password })
-    setTokens(data.accessToken, data.refreshToken)
-    await fetchUser()
+    console.log('[FlowCore] Login response:', data)
+    localStorage.setItem('accessToken', data.accessToken)
+    localStorage.setItem('refreshToken', data.refreshToken)
+    setUser(data)
     return data
   }
 
-  const register = async (name, email, password) => {
-    const { data } = await api.post('/auth/register', { name, email, password })
-    setTokens(data.accessToken, data.refreshToken)
-    await fetchUser()
+  const register = async ({ name, email, countryCode, phone, password }) => {
+    const { data } = await api.post('/auth/register', { name, email, countryCode, phone, password })
+    console.log('[FlowCore] Register response:', data)
+    localStorage.setItem('accessToken', data.accessToken)
+    localStorage.setItem('refreshToken', data.refreshToken)
+    setUser(data)
     return data
   }
 

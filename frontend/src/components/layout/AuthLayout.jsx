@@ -1,4 +1,4 @@
-import logo from '@/assets/logo/flowcore-logo.svg'
+import logo from '@/assets/logo/flowCore.svg'
 
 export default function AuthLayout({ children }) {
   return (
@@ -9,7 +9,7 @@ export default function AuthLayout({ children }) {
 
       <div className="w-full max-w-md relative z-10">
         <div className="flex justify-center mb-8">
-          <img src={logo} alt="FlowCore" className="h-10" />
+          <img src={logo} alt="FlowCore" className="h-14 w-auto" />
         </div>
         {children}
       </div>
