@@ -1,5 +1,6 @@
 package com.flowcore.auth.jwt;
 
+import com.flowcore.auth.service.BlacklistTokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,7 +18,7 @@ import java.util.Collections;
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
-
+    private final BlacklistTokenService blacklistTokenService;
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
@@ -31,6 +32,10 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
         String authToken = authHeader.substring(7);
+        if(blacklistTokenService.isBlacklisted(authToken)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
         try {
             String email = jwtUtil.extractEmail(authToken);
 

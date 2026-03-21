@@ -4,6 +4,7 @@ import com.flowcore.auth.dto.AuthResponse;
 import com.flowcore.auth.dto.LoginRequest;
 import com.flowcore.auth.dto.RegisterRequest;
 import com.flowcore.auth.entity.User;
+import com.flowcore.auth.exception.ApiException;
 import com.flowcore.auth.jwt.JwtUtil;
 import com.flowcore.auth.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RefreshTokenService refreshTokenService;
     private final JwtUtil jwtUtil;
     public AuthResponse registerUser(RegisterRequest request) {
 
@@ -42,18 +44,20 @@ public class UserService {
         user.setPhone(request.getPhone());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-        String token = jwtUtil.generateToken(request.getEmail());
-        return new AuthResponse(token, "User registerd successfully");
+        String accessToken = jwtUtil.generateToken(request.getEmail());
+        String refreshToken = refreshTokenService.createFreshToken(user).getToken();
+        return new AuthResponse(accessToken, refreshToken,"User registered successfully");
     }
 
     public AuthResponse login(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ApiException("User not found"));
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new RuntimeException("Invalid Credentials");
         }
 
         String token = jwtUtil.generateToken(user.getEmail());
-        return new AuthResponse(token, "User logged in successfully");
+        String refreshToken = refreshTokenService.createFreshToken(user).getToken();
+        return new AuthResponse(token, refreshToken,"User logged in successfully");
     }
 }
