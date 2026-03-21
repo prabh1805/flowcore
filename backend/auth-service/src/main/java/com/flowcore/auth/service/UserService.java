@@ -39,11 +39,12 @@ public class UserService {
 
         // Create user from request and save it
         User user = new User();
+        user.setName(request.getName());
         user.setEmail(request.getEmail());
         user.setCountryCode(request.getCountryCode());
         user.setPhone(request.getPhone());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-
+        userRepository.save(user);
         String accessToken = jwtUtil.generateToken(request.getEmail());
         String refreshToken = refreshTokenService.createFreshToken(user).getToken();
         return new AuthResponse(accessToken, refreshToken,"User registered successfully");

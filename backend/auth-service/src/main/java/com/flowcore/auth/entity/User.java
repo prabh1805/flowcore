@@ -1,5 +1,6 @@
 package com.flowcore.auth.entity;
 
+import com.flowcore.auth.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -38,6 +39,7 @@ public class User {
     @Column(nullable = false)
     private String phone;
 
-    @Column(nullable = false)
-    private String role;
+    @Builder.Default
+    @Enumerated(EnumType.STRING)
+    private Role role = Role.USER;   // default value
 }
